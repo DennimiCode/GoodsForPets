@@ -1,0 +1,54 @@
+﻿<Window x:Class="GoodsForPets.Views.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GoodsForPets"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="ООО &quot;Товары для животных&quot;"
+        MinHeight="450" MinWidth="800"
+        Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Image
+                Source="/Resources/logo.png"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"/>
+            <Label
+                Style="{StaticResource Header}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Content="ООО &quot;Товары для животных&quot;"/>
+
+            <StackPanel VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Margin="0, 0, 5, 5"
+                        Orientation="Horizontal">
+                <Label
+                    Name="UserFullNameLabel"
+                    Visibility="Hidden"
+                    Content="drfadafadfafafadfafadf"/>
+
+                <Button
+                    Name="LogoutButton"                  
+                    Content="Выйти"
+                    Visibility="Hidden"
+                    Click="LogoutButton_Click"/>
+            </StackPanel>
+
+
+        </Grid>
+
+        <Frame
+            Grid.Row="1"
+            Name="MainFrame"
+            Source="/Views/Pages/LoginPage.xaml"
+            NavigationUIVisibility="Hidden"/>
+    </Grid>
+</Window>
