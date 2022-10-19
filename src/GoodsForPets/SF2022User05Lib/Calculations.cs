@@ -30,7 +30,15 @@ namespace SF2022User05Lib
                 stringBuilder.Append(currentInterval.ToString("hh\\:mm", new CultureInfo("en-US")));
                 result[i] = stringBuilder.ToString();
             }
-            return result;
+            var li = new List<string>();
+            foreach (var item in result)
+            {
+                if (item != null)
+                {
+                    li.Add(item);
+                }
+            }
+            return li.ToArray();
         }
     }
 }
