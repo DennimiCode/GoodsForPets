@@ -32,8 +32,7 @@
                         Orientation="Horizontal">
                 <Label
                     Name="UserFullNameLabel"
-                    Visibility="Hidden"
-                    Content="drfadafadfafafadfafadf"/>
+                    Visibility="Hidden"/>
 
                 <Button
                     Name="LogoutButton"                  
@@ -41,8 +40,6 @@
                     Visibility="Hidden"
                     Click="LogoutButton_Click"/>
             </StackPanel>
-
-
         </Grid>
 
         <Frame

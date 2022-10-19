@@ -9,7 +9,7 @@ namespace GoodsForPets.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //ConfigurationManager.ConnectionStrings["GoodForPetsMSSQL"].ConnectionString
-            //"Server= sql.bsite.net\MSSQL2016;Database=backdennimi_GoodsForPets;User Id=backdennimi_GoodsForPets;Password=@X*9vNKkVp2^GP;"
+            //"Server= sql.bsite.net\\MSSQL2016;Database=backdennimi_GoodsForPets;User Id=backdennimi_GoodsForPets;Password=@X*9vNKkVp2^GP;"
             optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["GoodForPetsMSSQL"].ConnectionString);
         }
 

@@ -49,6 +49,7 @@ namespace GoodsForPets.Views.Pages
         private void GetUserFullName(User user)
         {
             Helper.UserFullName.Visibility = Visibility.Visible;
+            Helper.LogoutButton.Visibility = Visibility.Visible;
             Helper.UserFullName.Content = $"{user.Surname} {user.Name} {user.Patronymic}";
         }
 

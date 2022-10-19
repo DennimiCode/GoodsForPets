@@ -16,6 +16,8 @@ namespace GoodsForPets.Models
 
         public int LocationId { get; set; }
         public Location Location { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
 
         public List<OrderProduct> OrderProducts { get; set; }
     }

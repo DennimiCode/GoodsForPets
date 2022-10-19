@@ -8,7 +8,8 @@ namespace SF2022User05Lib
         public string[] AvailablePeriods(TimeSpan[] startTimes, int[] durations, TimeSpan beginWorkingTime, TimeSpan endWorkingTime, int consultationTime)
         {
             int iterationCount = Convert.ToInt32((endWorkingTime - beginWorkingTime).TotalMinutes / consultationTime) * 2;
-            string[] result = new string[iterationCount];
+            string[] tempIntervals = new string[iterationCount];
+            List<string> result = new List<string>();
             TimeSpan currentInterval = beginWorkingTime;
             for (int i = 0, j = 0; i < iterationCount && currentInterval < endWorkingTime; i++)
             {
@@ -28,17 +29,14 @@ namespace SF2022User05Lib
                 currentInterval += new TimeSpan(0, consultationTime, 0);
                 stringBuilder.Append("-");
                 stringBuilder.Append(currentInterval.ToString("hh\\:mm", new CultureInfo("en-US")));
-                result[i] = stringBuilder.ToString();
+                tempIntervals[i] = stringBuilder.ToString();
             }
-            var li = new List<string>();
-            foreach (var item in result)
-            {
-                if (item != null)
-                {
-                    li.Add(item);
-                }
-            }
-            return li.ToArray();
+
+            foreach (var timeInterval in tempIntervals)
+                if (timeInterval != null)
+                    result.Add(timeInterval);
+
+            return result.ToArray();
         }
     }
 }
