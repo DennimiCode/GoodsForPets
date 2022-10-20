@@ -1,0 +1,73 @@
+<UserControl x:Class="GoodsForPets.Views.Controls.ItemControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GoodsForPets.Views.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="800">
+    <Grid Name="MainGrid"
+          MouseLeftButtonDown="MainGrid_MouseLeftButtonDown"
+          Background="#FFFFFF">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+
+        <Image  VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            Name="ICImage"
+            Margin="5" Source="/Resources/ItemsImages/emptyItem.png" />
+
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Name="ProductNameTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Наименование: "
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Grid.Row="1"
+                Name="DescriptionTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Описание: "
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Grid.Row="2"
+                Name="ManufactureTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Производитель: "
+                TextWrapping="Wrap"/>
+
+            <TextBlock
+                Grid.Row="3"
+                Name="PriceTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Цена: "
+                TextWrapping="Wrap"/>
+        </Grid>
+
+        <TextBlock
+                Grid.Column="2"
+                Name="WarehouseAmountTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Left"
+                Text="Количество на складе: "
+                TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>
