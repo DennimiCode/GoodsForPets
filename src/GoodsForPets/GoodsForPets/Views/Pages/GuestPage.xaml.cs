@@ -1,7 +1,9 @@
 using GoodsForPets.Helpers;
 using GoodsForPets.Models;
 using GoodsForPets.Views.Controls;
+
 using Microsoft.EntityFrameworkCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,51 +33,62 @@ namespace GoodsForPets.Views.Pages
             Helper.UserFullName.Visibility = Visibility.Visible;
             Helper.UserFullName.Content = "Гость";
             ManufacturerComboBox.ItemsSource = await _context.Manufacturers.ToListAsync();
-            (ManufacturerComboBox.ItemsSource as List<Manufacturer>).Insert(0, new Manufacturer() { Id = 0, Name = "Все производители" });
+            (ManufacturerComboBox.ItemsSource as List<Manufacturer>)?.Insert(0, new Manufacturer() { Id = 0, Name = "Все производители" });
             var products = new List<ItemControl>();
-            var dbProducts = await _context.Products.Join(_context.ProductsInfo,
-                                                                p => p.ProductInfoId,
-                                                                pi => pi.Id,
-                                                                (p, pi) => new { p.Name, p.Description, p.Cost, p.QuantityInStock, pi.Manufacturer })
-                                                            .Join(_context.Manufacturers,
-                                                                p => p.Manufacturer,
-                                                                pm => pm.Id,
-                                                                (p, pm) => new { p.Name, p.Description, p.Cost, p.QuantityInStock, Manufacture = pm.Name }).ToListAsync();
-            var dbSubProducts = await _context.SubProducts.Join(_context.ProductsInfo,
-                                                                sp => sp.ProductInfoId,
-                                                                pi => pi.Id,
-                                                                (sp, pi) => new { sp.Name, sp.Description, sp.Cost, sp.QuantityInStock, pi.Manufacturer })
-                                                             .Join(_context.Manufacturers,
-                                                                p => p.Manufacturer,
-                                                                pm => pm.Id,
-                                                                (p, pm) => new { p.Name, p.Description, p.Cost, p.QuantityInStock, Manufacture = pm.Name }).ToListAsync();
+
+            var dbProducts = await _context.ProductsInfo.Join
+                (
+                    _context.Manufacturers,
+                    pi => pi.ManufacturerId,
+                    m => m.Id,
+                    (pi, m) => new { pi.Id, pi.SupplierId, pi.CategoryId, Manufacturer = m.Name }
+                )
+                .Join
+                (
+                    _context.Suppliers,
+                    pi => pi.SupplierId,
+                    s => s.Id,
+                    (pi, s) => new { pi.Id, pi.CategoryId, pi.Manufacturer, Supplier = s.Name }
+                )
+                .Join
+                (
+                    _context.Categories,
+                    pi => pi.CategoryId,
+                    c => c.Id,
+                    (pi, c) => new { pi.Id, pi.Manufacturer, pi.Supplier, Category = c.Name }
+                )
+                .Join
+                (
+                    _context.Products,
+                    pi => pi.Id,
+                    p => p.ProductInfoId,
+                    (pi, p) => new ProductRecord
+                    (
+                        p.Name,
+                        p.Cost,
+                        p.MaxDiscountAmount,
+                        p.CurrentDiscountAmount,
+                        p.QuantityInStock,
+                        p.Description, p.Photo, pi.Manufacturer, pi.Supplier, pi.Category
+                    )
+                ).ToListAsync();
+
             foreach (var item in dbProducts)
             {
                 ItemControl itemControl = new ItemControl(item.QuantityInStock)
                 {
                     ProductName = item.Name,
                     Description = item.Description,
-                    Manufacturer = item.Manufacture,
-                    Price = item.Cost
+                    Manufacturer = item.Manufacturer,
+                    Price = item.Cost,
+                    Photo = item.Photo
                 };
 
                 await _context.SaveChangesAsync();
                 products.Add(itemControl);
             }
 
-            foreach (var item in dbSubProducts)
-            {
-                ItemControl itemControl = new ItemControl(item.QuantityInStock)
-                {
-                    ProductName = item.Name,
-                    Description = item.Description,
-                    Manufacturer = item.Manufacture,
-                    Price = item.Cost
-                };
-
-                products.Add(itemControl);
-            }
-
+            products = products.OrderBy(pr => pr.ProductName).ToList();
             _productsList = products;
             _startProductsList = products;
             ReloadItems(products);
@@ -92,7 +105,6 @@ namespace GoodsForPets.Views.Pages
         {
             if (string.IsNullOrEmpty(SearchTextBox.Text))
             {
-
                 ReloadItems(_productsList);
                 return;
             }
@@ -116,7 +128,7 @@ namespace GoodsForPets.Views.Pages
 
         private async void ManufacturerComboBoxOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((sender as ComboBox).SelectedIndex == 0)
+            if ((sender as ComboBox)?.SelectedIndex == 0)
             {
                 if (Desc.IsChecked == true)
                 {
@@ -131,16 +143,16 @@ namespace GoodsForPets.Views.Pages
             }
             else
             {
-                int selectedItemID = Convert.ToInt32((sender as ComboBox).SelectedValue);
-                string mName = (await _context.Manufacturers.Where(pm => pm.Id == selectedItemID).ToListAsync()).FirstOrDefault().Name;
+                int selectedItemId = Convert.ToInt32(((sender as ComboBox)?.SelectedItem as Manufacturer)?.Id);
+                string mName = (await _context.Manufacturers.Where(pm => pm.Id == selectedItemId).ToListAsync()).FirstOrDefault().Name;
                 if (Desc.IsChecked == true)
                 {
-                    _productsList = _startProductsList.OrderByDescending(ic => ic.Price).Where(ic => ic.Manufacturer == mName).ToList();
+                    _productsList = _startProductsList.OrderByDescending(ic => ic.Price).Where(ic => ic.Manufacturer.Split(':')[1].Trim() == mName).ToList();
                     ReloadItems(_productsList);
                 }
                 else
                 {
-                    _productsList = _startProductsList.OrderBy(ic => ic.Price).Where(ic => ic.Manufacturer == mName).ToList();
+                    _productsList = _startProductsList.OrderBy(ic => ic.Price).Where(ic => ic.Manufacturer.Split(':')[1].Trim() == mName).ToList();
                     ReloadItems(_productsList);
                 }
             }
@@ -148,7 +160,7 @@ namespace GoodsForPets.Views.Pages
 
         private void PricesRadioButtonOnChecked(object sender, RoutedEventArgs e)
         {
-            if ((sender as RadioButton).Name == "Desc")
+            if ((sender as RadioButton)?.Name == "Desc")
             {
                 _productsList = _productsList.OrderByDescending(ic => ic.Price).ToList();
                 ReloadItems(_productsList);

@@ -2,6 +2,7 @@ using GoodsForPets.Views.Windows;
 using System;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GoodsForPets.Views.Controls
 {
@@ -25,10 +26,16 @@ namespace GoodsForPets.Views.Controls
             get => ManufactureTextBlock.Text;
             set => ManufactureTextBlock.Text += value;
         }
-        public decimal Price
+        public double Price
         {
-            get => Convert.ToDecimal(PriceTextBlock.Text.Split(':')[1].Trim());
+            get => Convert.ToDouble(PriceTextBlock.Text.Split(':')[1].Trim());
             set => PriceTextBlock.Text += value.ToString();
+        }
+
+        public string Photo
+        {
+            get => ICImage.Source.ToString();
+            set => ICImage.Source = new BitmapImage(new Uri("/Resources/ItemsImages/" + (value != null ? value : "emptyItem.png"), UriKind.Relative));
         }
 
         public int WarehouseAmount { get; set; }

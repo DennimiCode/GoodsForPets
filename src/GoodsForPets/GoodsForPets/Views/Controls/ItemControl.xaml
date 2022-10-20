@@ -15,10 +15,12 @@
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
 
-        <Image  VerticalAlignment="Center"
+        <Image  
+            VerticalAlignment="Center"
             HorizontalAlignment="Center"
             Name="ICImage"
-            Margin="5" Source="/Resources/ItemsImages/emptyItem.png" />
+            Margin="5"
+            Source="/Resources/ItemsImages/emptyItem.png" />
 
 
         <Grid Grid.Column="1">

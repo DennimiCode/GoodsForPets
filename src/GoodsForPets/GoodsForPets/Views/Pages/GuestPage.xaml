@@ -52,7 +52,7 @@
 
                 <ComboBox Name="ManufacturerComboBox"
                           Margin="0, 5, 0, 0"
-                          SelectedValuePath="ID"
+                          SelectedValuePath="Id"
                           DisplayMemberPath="Name"
                           SelectionChanged="ManufacturerComboBoxOnSelectionChanged">
                 </ComboBox>
