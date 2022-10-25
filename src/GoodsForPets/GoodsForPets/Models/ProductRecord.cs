@@ -1,7 +1,8 @@
 ﻿namespace GoodsForPets.Models
 {
-    record ProductRecord
+    public record ProductRecord
     (
+        string ArticleNumber,
         string Name,
         double Cost,
         int MaxDiscountAmount,
