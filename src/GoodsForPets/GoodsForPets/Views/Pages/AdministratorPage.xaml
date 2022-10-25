@@ -9,6 +9,69 @@
       Title="AdministratorPage">
 
     <Grid Background="#FFFFFF">
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <StackPanel>
+                <StackPanel VerticalAlignment="Top"
+                            HorizontalAlignment="Left"
+                            Margin="5, 5, 0, 0"
+                            Orientation="Horizontal">
+                    <Label
+                        Content="Поиск: "/>
+                    <TextBox
+                        Name="SearchTextBox"
+                        Width="300"
+                        TextChanged="SearchTextBoxOnTextChanged"/>
+                </StackPanel>
+
+                <Button
+                    Name="AddProductButton"
+                    Content="Добавить товар"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Margin="5, 5, 0, 0"
+                    Padding="5"
+                    Click="AddProductButton_Click"/>
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Margin="0, 5, 5, 0">
+                <StackPanel
+                        Orientation="Horizontal">
+                    <Label
+                        Content="Цена: "/>
+                    <RadioButton
+                        GroupName="Prices"
+                        Margin="0, 0, 5, 0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="по возрастанию"
+                        Checked="PricesRadioButtonOnChecked"/>
+                    <RadioButton
+                        GroupName="Prices"
+                        Name="Desc"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="по убыванию"
+                        Checked="PricesRadioButtonOnChecked"/>
+                </StackPanel>
+
+                <ComboBox Name="ManufacturerComboBox"
+                          Margin="0, 5, 0, 0"
+                          SelectedValuePath="Id"
+                          DisplayMemberPath="Name"
+                          SelectionChanged="ManufacturerComboBoxOnSelectionChanged">
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Name="ItemsStackPanel"/>
+        </ScrollViewer>
     </Grid>
 </Page>
