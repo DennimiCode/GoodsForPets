@@ -1,3 +1,5 @@
+using GoodsForPets.Helpers;
+using GoodsForPets.Models;
 using GoodsForPets.Views.Windows;
 using System;
 using System.Windows.Controls;
@@ -35,10 +37,11 @@ namespace GoodsForPets.Views.Controls
         public string Photo
         {
             get => ICImage.Source.ToString();
-            set => ICImage.Source = new BitmapImage(new Uri("/Resources/ItemsImages/" + (value != null ? value : "emptyItem.png"), UriKind.Relative));
+            set => ICImage.Source = new BitmapImage(new Uri(Environment.CurrentDirectory + $"\\Resources\\ItemsImages\\{(value != null ? value : "emptyItem.png")}", UriKind.Absolute));
         }
 
         public int WarehouseAmount { get; set; }
+        internal ProductRecord Product { get; set; }
 
         public ItemControl(int warehouseAmount)
         {
@@ -53,8 +56,11 @@ namespace GoodsForPets.Views.Controls
 
         private void MainGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
+            if (Helper.AuthorizedUserRole == 1)
+            {
+                ProductWindow productWindow = new ProductWindow(Product);
+                productWindow.ShowDialog();
+            }
         }
     }
 }
