@@ -20,6 +20,7 @@ namespace GoodsForPets.Views.Pages
         private List<ItemControl> _startProductsList;
         private List<ItemControl> _productsList;
         private Context _context;
+
         public GuestPage()
         {
             InitializeComponent();
@@ -33,7 +34,7 @@ namespace GoodsForPets.Views.Pages
             Helper.UserFullName.Visibility = Visibility.Visible;
             Helper.UserFullName.Content = "Гость";
             ManufacturerComboBox.ItemsSource = await _context.Manufacturers.ToListAsync();
-            (ManufacturerComboBox.ItemsSource as List<Manufacturer>)?.Insert(0, new Manufacturer() { Id = 0, Name = "Все производители" });
+            (ManufacturerComboBox.ItemsSource as List<Manufacturer>)?.Insert(0, new Manufacturer { Id = 0, Name = "Все производители" });
             var products = new List<ItemControl>();
 
             var dbProducts = await _context.ProductsInfo.Join
@@ -64,6 +65,7 @@ namespace GoodsForPets.Views.Pages
                     p => p.ProductInfoId,
                     (pi, p) => new ProductRecord
                     (
+                        p.Id,
                         p.Name,
                         p.Cost,
                         p.MaxDiscountAmount,
@@ -77,6 +79,7 @@ namespace GoodsForPets.Views.Pages
             {
                 ItemControl itemControl = new ItemControl(item.QuantityInStock)
                 {
+                    Product = item,
                     ProductName = item.Name,
                     Description = item.Description,
                     Manufacturer = item.Manufacturer,
@@ -84,7 +87,6 @@ namespace GoodsForPets.Views.Pages
                     Photo = item.Photo
                 };
 
-                await _context.SaveChangesAsync();
                 products.Add(itemControl);
             }
 
@@ -92,6 +94,7 @@ namespace GoodsForPets.Views.Pages
             _productsList = products;
             _startProductsList = products;
             ReloadItems(products);
+            ManufacturerComboBox.SelectedIndex = 0;
         }
 
         private void ReloadItems(List<ItemControl> products)
