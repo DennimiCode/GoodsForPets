@@ -7,6 +7,7 @@ namespace GoodsForPets.Helpers
     {
         public static Button LogoutButton { get; set; }
         public static Label UserFullName { get; set; }
+        public static int AuthorizedUserRole { get; set; }
 
         public static int SearchAlgorithm(string firstString, string secondString)
         {
