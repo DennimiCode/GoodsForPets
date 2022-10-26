@@ -29,16 +29,23 @@ namespace GoodsForPets.Views.Pages
             OnPageLoading();
         }
 
-        private async void OnPageLoading()
+        private void OnPageLoading()
         {
             Helper.LogoutButton.Visibility = Visibility.Visible;
             Helper.UserFullName.Visibility = Visibility.Visible;
             Helper.UserFullName.Content = "Гость";
-            ManufacturerComboBox.ItemsSource = await _context.Manufacturers.ToListAsync();
+            ManufacturerComboBox.ItemsSource = _context.Manufacturers.ToList();
             (ManufacturerComboBox.ItemsSource as List<Manufacturer>)?.Insert(0, new Manufacturer() { Id = 0, Name = "Все производители" });
+            GetDbProducts();
+            ManufacturerComboBox.SelectedIndex = 0;
+            ByUpRadioButton.IsChecked = true;
+        }
+
+        private void GetDbProducts()
+        {
             var products = new List<ItemControl>();
 
-            var dbProducts = await _context.ProductsInfo.Join
+            var dbProducts = _context.ProductsInfo.Join
                 (
                     _context.Manufacturers,
                     pi => pi.ManufacturerId,
@@ -74,7 +81,7 @@ namespace GoodsForPets.Views.Pages
                         p.QuantityInStock,
                         p.Description, p.Photo, pi.Manufacturer, pi.Supplier, pi.Category
                     )
-                ).ToListAsync();
+                ).ToList();
 
             foreach (var item in dbProducts)
             {
@@ -92,10 +99,10 @@ namespace GoodsForPets.Views.Pages
             }
 
             products = products.OrderBy(pr => pr.ProductName).ToList();
+            products = products.OrderBy(pr => pr.Product.Cost).ToList();
             _productsList = products;
             _startProductsList = products;
-            ReloadItems(products);
-            ManufacturerComboBox.SelectedIndex = 0;
+            ReloadItems(_productsList);
         }
 
         private void ReloadItems(List<ItemControl> products)
@@ -180,6 +187,11 @@ namespace GoodsForPets.Views.Pages
         {
             ProductWindow productWindow = new ProductWindow(null, false);
             productWindow.ShowDialog();
+        }
+
+        private void UpdateProductsListButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetDbProducts();
         }
     }
 }
