@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using System.Windows;
 
 namespace GoodsForPets
@@ -13,5 +8,9 @@ namespace GoodsForPets
     /// </summary>
     public partial class App : Application
     {
+        private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            MessageBox.Show("An unhandled exception just occurred: " + e.Exception.Message, "Exception Sample", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 }
