@@ -192,6 +192,13 @@
                 Padding="5"
                 Content="Выбрать фото"
                 Click="AddProductImageButton_Click"/>
+
+            <Button
+                Name="SetDefaultImageButton"
+                Margin="0,5,0,5"
+                Padding="5"
+                Content="Фото по умолчанию"
+                Click="SetDefaultImageButton_Click"/>
         </StackPanel>
 
         <StackPanel VerticalAlignment="Bottom"

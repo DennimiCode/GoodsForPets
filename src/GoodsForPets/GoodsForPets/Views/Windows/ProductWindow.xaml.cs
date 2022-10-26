@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 using GoodsForPets.Models;
@@ -21,6 +22,7 @@ namespace GoodsForPets.Views.Windows
         private readonly ProductRecord _product;
         private readonly bool _isEdit;
         private Context _context;
+        private string _newProductPhoto;
         public ProductWindow(ProductRecord product, bool isEdit = true)
         {
             InitializeComponent();
@@ -51,9 +53,7 @@ namespace GoodsForPets.Views.Windows
                     QuantityInStockTextBox.Text = _product.QuantityInStock.ToString();
                     DescriptionTextBlock.Text = _product.Description;
                     ProductImage.Source = new BitmapImage(new Uri(Environment.CurrentDirectory + $"\\Resources\\ItemsImages\\{(_product.Photo == null ? "emptyItem.png" : _product.Photo)}", UriKind.Absolute));
-                    SupplierComboBox.SelectedIndex = _context.Suppliers.First(s => s.Name == _product.Supplier).Id - 1;
-                    ManufacturerComboBox.SelectedIndex = _context.Manufacturers.First(m => m.Name == _product.Manufacturer).Id - 1;
-                    CategoryComboBox.SelectedIndex = _context.Categories.First(c => c.Name == _product.Category).Id - 1;
+                    ReloadComboBoxes();
                 }
             }
             else
@@ -61,12 +61,7 @@ namespace GoodsForPets.Views.Windows
                 Title = "Добавление товара";
                 SaveCreateProductButton.Content = "Добавить";
                 DeleteProductButton.Visibility = Visibility.Hidden;
-                (SupplierComboBox.ItemsSource as List<Supplier>)?.Insert(0, new Supplier { Id = 0, Name = "Не выбран" });
-                (ManufacturerComboBox.ItemsSource as List<Manufacturer>)?.Insert(0, new Manufacturer { Id = 0, Name = "Не выбран" });
-                (CategoryComboBox.ItemsSource as List<Category>)?.Insert(0, new Category { Id = 0, Name = "Не выбрана", Unit = "Нет" });
-                SupplierComboBox.SelectedIndex = 0;
-                ManufacturerComboBox.SelectedIndex = 0;
-                CategoryComboBox.SelectedIndex = 0;
+                ReloadComboBoxes();
             }
         }
 
@@ -78,9 +73,9 @@ namespace GoodsForPets.Views.Windows
 
             if (_isEdit)
             {
-                SupplierComboBox.SelectedIndex = _context.Suppliers.First(s => s.Name == _product.Supplier).Id - 1;
-                ManufacturerComboBox.SelectedIndex = _context.Manufacturers.First(m => m.Name == _product.Manufacturer).Id - 1;
-                CategoryComboBox.SelectedIndex = _context.Categories.First(c => c.Name == _product.Category).Id - 1;
+                SupplierComboBox.SelectedItem = _context.Suppliers.First(m => m.Name == _product.Supplier);
+                ManufacturerComboBox.SelectedItem = _context.Manufacturers.First(m => m.Name == _product.Manufacturer);
+                CategoryComboBox.SelectedItem = _context.Categories.First(c => c.Name == _product.Category);
             }
             else
             {
@@ -129,6 +124,7 @@ namespace GoodsForPets.Views.Windows
                 File.Copy(openFileDialog.FileName, Environment.CurrentDirectory + $"\\..\\..\\..\\Resources\\ItemsImages\\{ArticleNumerTextBox.Text}{fileExtension}", true);
                 ProductImage.Source = new BitmapImage(new Uri(Environment.CurrentDirectory + $"\\Resources\\ItemsImages\\{ArticleNumerTextBox.Text}{fileExtension}", UriKind.Absolute));
                 ArticleNumerTextBox.IsReadOnly = true;
+                _newProductPhoto = string.IsNullOrWhiteSpace($"{ArticleNumerTextBox.Text}{fileExtension}") ? null : $"{ArticleNumerTextBox.Text}{fileExtension}";
             }
             else if (string.IsNullOrWhiteSpace(ArticleNumerTextBox.Text))
                 MessageBox.Show("Перед выбором фото, введите артикул.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -138,30 +134,29 @@ namespace GoodsForPets.Views.Windows
 
         private async void DeleteProductButton_Click(object sender, RoutedEventArgs e)
         {
-            var messageBoxResult = MessageBox.Show("Вы действительно хотите удалить данный продукт?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var messageBoxResult = MessageBox.Show("Вы действительно хотите удалить данный товар?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                var products = _context.Products;
-                products.Remove(products.First(p => p.Id == ArticleNumerTextBox.Text));
-                await _context.SaveChangesAsync();
+                var ordersProducts = _context.OrderProducts;
+                if (!ordersProducts.Any(op => op.ProductId == ArticleNumerTextBox.Text))
+                {
+                    var products = _context.Products;
+                    products.Remove(products.First(p => p.Id == ArticleNumerTextBox.Text));
+                    await _context.SaveChangesAsync();
+                    MessageBox.Show("Товар успешно удален!", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Question);
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("Данный продукт находится в заказе!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
         private async void SaveCreateProductButton_Click(object sender, RoutedEventArgs e)
         {
             var products = _context.Products;
-            if (_isEdit)
-            {
-                var messageBoxResult = MessageBox.Show("Сохранить изменения?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    products.Update(products.First(p => p.Id == ArticleNumerTextBox.Text));
-                    await _context.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                if (SupplierComboBox.SelectedIndex != 0
+            if (SupplierComboBox.SelectedIndex != 0
                     && ManufacturerComboBox.SelectedIndex != 0
                     && CategoryComboBox.SelectedIndex != 0
                     && !string.IsNullOrWhiteSpace(ArticleNumerTextBox.Text)
@@ -170,13 +165,37 @@ namespace GoodsForPets.Views.Windows
                     && !string.IsNullOrWhiteSpace(MaxDiscountAmountTextBox.Text)
                     && !string.IsNullOrWhiteSpace(CurrentDiscountAmountTextBox.Text)
                     && !string.IsNullOrWhiteSpace(QuantityInStockTextBox.Text)
-                    && !string.IsNullOrWhiteSpace(DescriptionTextBlock.Text))
+                    && !string.IsNullOrWhiteSpace(DescriptionTextBlock.Text)
+                    && double.TryParse(CostTextBox.Text, out double cost)
+                    && int.TryParse(MaxDiscountAmountTextBox.Text, out int maxDiscount)
+                    && int.TryParse(CurrentDiscountAmountTextBox.Text, out int currentDiscount)
+                    && int.TryParse(QuantityInStockTextBox.Text, out int quantityInStock))
+            {
+                if (_isEdit)
+                {
+                    var messageBoxResult = MessageBox.Show("Сохранить изменения?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    if (messageBoxResult == MessageBoxResult.Yes)
+                    {
+                        var product = products.Where(p => p.Id == ArticleNumerTextBox.Text).FirstOrDefault();
+                        product.Name = NameTextBox.Text;
+                        product.Cost = cost;
+                        product.MaxDiscountAmount = maxDiscount;
+                        product.CurrentDiscountAmount = currentDiscount;
+                        product.QuantityInStock = quantityInStock;
+                        product.Description = DescriptionTextBlock.Text;
+                        product.Photo = _newProductPhoto;
+                        await _context.SaveChangesAsync();
+                        MessageBox.Show("Товар успешно обновлен!", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Question);
+                        Close();
+                    }
+                }
+                else
                 {
                     ProductInfo productInfo = new ProductInfo
                     {
-                        CategoryId = _context.Categories.First(c => c.Name == CategoryComboBox.SelectedValue.ToString()).Id,
-                        ManufacturerId = _context.Manufacturers.First(m => m.Name == ManufacturerComboBox.SelectedValue.ToString()).Id,
-                        SupplierId = _context.Suppliers.First(s => s.Name == SupplierComboBox.SelectedValue.ToString()).Id
+                        CategoryId = _context.Categories.First(c => c.Name == CategoryComboBox.Text).Id,
+                        ManufacturerId = _context.Manufacturers.First(m => m.Name == ManufacturerComboBox.Text).Id,
+                        SupplierId = _context.Suppliers.First(s => s.Name == SupplierComboBox.Text).Id
                     };
                     _context.ProductsInfo.Add(productInfo);
                     await _context.SaveChangesAsync();
@@ -185,22 +204,29 @@ namespace GoodsForPets.Views.Windows
                     {
                         Id = ArticleNumerTextBox.Text,
                         Name = NameTextBox.Text,
-                        Cost = Convert.ToDouble(CostTextBox.Text),
-                        MaxDiscountAmount = Convert.ToInt32(MaxDiscountAmountTextBox.Text),
-                        CurrentDiscountAmount = Convert.ToInt32(CurrentDiscountAmountTextBox.Text),
-                        QuantityInStock = Convert.ToInt32(QuantityInStockTextBox.Text),
+                        Cost = cost,
+                        MaxDiscountAmount = maxDiscount,
+                        CurrentDiscountAmount = currentDiscount,
+                        QuantityInStock = quantityInStock,
                         Description = DescriptionTextBlock.Text,
                         ProductInfoId = productInfo.Id
                     };
                     _context.Products.Add(product);
                     await _context.SaveChangesAsync();
-                    MessageBox.Show("Товар успешно добавлен!", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                }
-                else
-                {
-                    MessageBox.Show("Все поля обязательны к заполнению!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Товар успешно добавлен!", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Question);
+                    Close();
                 }
             }
+            else
+            {
+                MessageBox.Show("Проверьте корректность введенных данных!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SetDefaultImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            _newProductPhoto = null;
+            ProductImage.Source = new BitmapImage(new Uri(Environment.CurrentDirectory + $"\\Resources\\ItemsImages\\emptyItem.png", UriKind.Absolute));
         }
     }
 }
