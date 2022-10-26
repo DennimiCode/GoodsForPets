@@ -8,8 +8,8 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Title="Добавить категорию"
-        Height="160" Width="230"
-        MinHeight="160" MinWidth="230">
+        Height="220" Width="230"
+        MinHeight="220" MinWidth="230">
     <Grid>
         <StackPanel>
             <Label

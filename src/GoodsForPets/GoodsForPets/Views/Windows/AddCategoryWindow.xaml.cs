@@ -25,6 +25,8 @@ namespace GoodsForPets.Views.Windows
             };
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
+            MessageBox.Show("Новая категория успешно добавлена!", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Question);
+            Close();
         }
     }
 }

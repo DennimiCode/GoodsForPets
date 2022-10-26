@@ -24,6 +24,8 @@ namespace GoodsForPets.Views.Windows
             };
             _context.Suppliers.Add(supplier);
             await _context.SaveChangesAsync();
+            MessageBox.Show("Новый поставщик успешно добавлен!", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Question);
+            Close();
         }
     }
 }

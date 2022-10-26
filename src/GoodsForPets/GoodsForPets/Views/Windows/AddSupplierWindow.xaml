@@ -8,8 +8,8 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Title="Добавить поставщика"
-        Height="120" Width="230"
-        MinHeight="120" MinWidth="230">
+        Height="150" Width="230"
+        MinHeight="150" MinWidth="230">
     <Grid>
         <StackPanel>
             <Label
