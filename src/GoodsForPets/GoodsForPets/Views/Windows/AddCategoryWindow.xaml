@@ -12,10 +12,18 @@
         MinHeight="160" MinWidth="230">
     <Grid>
         <StackPanel>
+            <Label
+                Content="Название категории"
+                HorizontalAlignment="Left"/>
+            
             <TextBox
                 Name="NameTextBox"
                 Margin="5,5"/>
-            
+
+            <Label
+                Content="Единица измерения"
+                HorizontalAlignment="Left"/>
+
             <TextBox
                 Name="UnitTextBox"
                 Margin="5,5"/>

@@ -12,6 +12,10 @@
         MinHeight="120" MinWidth="230">
     <Grid>
         <StackPanel>
+            <Label
+                Content="Наименование поставщика"
+                HorizontalAlignment="Left"/>
+            
             <TextBox
                 Name="NameTextBox"
                 Margin="5,5"/>
