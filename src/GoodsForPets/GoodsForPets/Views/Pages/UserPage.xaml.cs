@@ -92,6 +92,7 @@ namespace GoodsForPets.Views.Pages
             }
 
             products = products.OrderBy(pr => pr.ProductName).ToList();
+            AllElementsCountTextBlock.Text = products.Count.ToString();
             _productsList = products;
             _startProductsList = products;
             ReloadItems(products);
@@ -103,6 +104,7 @@ namespace GoodsForPets.Views.Pages
             ItemsStackPanel.Children.Clear();
             foreach (var item in products)
                 ItemsStackPanel.Children.Add(item);
+            CurrentElementsCountTextBlock.Text = ItemsStackPanel.Children.Count.ToString();
         }
 
         private void SearchTextBoxOnTextChanged(object sender, TextChangedEventArgs e)

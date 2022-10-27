@@ -51,19 +51,19 @@
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="0, 0, 0, 5"
+                    Margin="0,0,0,5"
                     Name="LoginTextBox"/>
 
                 <PasswordBox
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="0, 0, 0, 5"
+                    Margin="0,0,0,5"
                     Name="UserPasswordBox"/>
 
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
-                    Margin="0, 0, 0, 5"
+                    Margin="0,0,0,5"
                     Name="InputCaptchaTextBox"/>
 
                 <Grid Grid.Row="3"
@@ -101,7 +101,7 @@
                 <Button
                     Grid.Column="1"
                     Name="GuestButton"
-                    Margin="0, 5, 5, 5"
+                    Margin="0,5,5,5"
                     Content="Гостевой режим"
                     Click="GuestButton_Click"/>
             </Grid>

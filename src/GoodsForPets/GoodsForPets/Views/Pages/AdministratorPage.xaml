@@ -46,6 +46,26 @@
                         Margin="5,5,0,0"
                         Padding="5"
                         Click="UpdateProductsListButton_Click"/>
+
+                    <TextBlock
+                        Name="CurrentElementsCountTextBlock"
+                        Text="00"
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+
+                    <TextBlock
+                        Text="из"
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                    
+                    <TextBlock
+                        Name="AllElementsCountTextBlock"
+                        Text="00"
+                        Margin="5,0,0,0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
 
